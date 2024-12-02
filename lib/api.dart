@@ -1,4 +1,4 @@
 class BaseUrl {
   static String apibaru =
-      "https://6741d3c0e4647499008eec2f.mockapi.io/api/v1/resep_jajan_tradisional";
+      "https://674c0c2854e1fca9290b83d7.mockapi.io/api/v1/resep_jajan_tradisional";
 }
