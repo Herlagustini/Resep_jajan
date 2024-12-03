@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:resep_jajan_tradisional/detail.dart';
+import 'package:resep_jajan_tradisional/resep.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,20 +15,25 @@ class MyApp extends StatelessWidget {
       title: 'Resep Jajan Tradisional',
       theme: ThemeData(
         primarySwatch: Colors.green,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        textTheme: TextTheme(
-          headline6: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        textTheme: const TextTheme(
+          headline6: TextStyle(
+              fontSize: 22, fontWeight: FontWeight.bold, color: Colors.green),
           subtitle1: TextStyle(fontSize: 16, color: Colors.black87),
         ),
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   // Data dari mock API
   final List<Map<String, dynamic>> recipes = [
     {
@@ -243,77 +248,119 @@ class HomePage extends StatelessWidget {
           "https://asset.kompas.com/crops/4aRibqAryAAhqPMmEeCHLGcg3GU=/44x2:621x386/1200x800/data/photo/2020/12/11/5fd32a67ca9db.jpg"
     }
   ];
-  // You can add more recipes as needed...
+  String searchQuery = "";
 
   @override
   Widget build(BuildContext context) {
+    final filteredRecipes = recipes
+        .where((recipe) =>
+            recipe['nama'].toLowerCase().contains(searchQuery.toLowerCase()))
+        .toList();
+
     return Scaffold(
       appBar: AppBar(
-        elevation: 4,
-        backgroundColor: Colors.green,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.green, Colors.teal],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         title: const Text('Resep Jajan Tradisional'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(
-          itemCount: recipes.length,
-          itemBuilder: (context, index) {
-            final recipe = recipes[index];
-            return Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              elevation: 5,
-              margin: const EdgeInsets.symmetric(vertical: 8.0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => DetailPage(recipe: recipe),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: Image.network(
-                          recipe['image'],
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              recipe['nama'],
-                              style: Theme.of(context).textTheme.headline6,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              recipe['deskripsi'],
-                              style: Theme.of(context).textTheme.subtitle1,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: "Cari resep favorit Anda...",
+                prefixIcon: const Icon(Icons.search, color: Colors.green),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
                 ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 20),
               ),
-            );
-          },
-        ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredRecipes.length,
+              itemBuilder: (context, index) {
+                final recipe = filteredRecipes[index];
+                return GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RecipeDetailPage(recipe: recipe),
+                    ),
+                  ),
+                  child: Card(
+                    elevation: 4,
+                    shadowColor: Colors.greenAccent,
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            bottomLeft: Radius.circular(15),
+                          ),
+                          child: Image.network(
+                            recipe['image'] ?? '',
+                            fit: BoxFit.cover,
+                            height: 100,
+                            width: 100,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.image,
+                                    size: 100, color: Colors.grey),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  recipe['nama'],
+                                  style: Theme.of(context).textTheme.headline6,
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  recipe['deskripsi'] ??
+                                      'Deskripsi tidak tersedia.',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.subtitle1,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

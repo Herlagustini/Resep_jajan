@@ -128,29 +128,26 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                       ),
                       initiallyExpanded: true,
-                      children: widget.recipe['bahan']
+                      children: (widget.recipe['bahan'] ?? [])
                           .asMap()
                           .entries
-                          .map<Widget>(
-                            (entry) => ListTile(
-                              leading: CircleAvatar(
-                                radius: 14,
-                                backgroundColor: Colors.green,
-                                child: Text(
-                                  "${entry.key + 1}",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                              title: Text(
-                                entry.value,
-                                style: const TextStyle(fontSize: 16),
+                          .map<Widget>((entry) {
+                        return ListTile(
+                          leading: CircleAvatar(
+                            radius: 14,
+                            backgroundColor: Colors.green,
+                            child: Text(
+                              "${entry.key + 1}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
                               ),
                             ),
-                          )
-                          .toList(),
+                          ),
+                          title: Text(entry.value,
+                              style: const TextStyle(fontSize: 16)),
+                        );
+                      }).toList(),
                     ),
                     const Divider(thickness: 1),
                     // Cara Memasak
@@ -163,29 +160,26 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                       ),
                       initiallyExpanded: true,
-                      children: widget.recipe['cara_masak']
+                      children: (widget.recipe['cara_masak'] ?? [])
                           .asMap()
                           .entries
-                          .map<Widget>(
-                            (entry) => ListTile(
-                              leading: CircleAvatar(
-                                radius: 14,
-                                backgroundColor: Colors.green,
-                                child: Text(
-                                  "${entry.key + 1}",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                              title: Text(
-                                entry.value,
-                                style: const TextStyle(fontSize: 16),
+                          .map<Widget>((entry) {
+                        return ListTile(
+                          leading: CircleAvatar(
+                            radius: 14,
+                            backgroundColor: Colors.green,
+                            child: Text(
+                              "${entry.key + 1}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
                               ),
                             ),
-                          )
-                          .toList(),
+                          ),
+                          title: Text(entry.value,
+                              style: const TextStyle(fontSize: 16)),
+                        );
+                      }).toList(),
                     ),
                   ],
                 ),
