@@ -6,7 +6,7 @@ class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String imgLink =
-        "https://png.pngtree.com/thumb_back/fh260/background/20230518/pngtree-cat-looking-at-the-camera-with-its-mouth-open-image_2571532.jpg";
+        "https://stickershop.line-scdn.net/stickershop/v1/product/26714426/LINEStorePC/main.png?v=1";
 
     return Scaffold(
       appBar: AppBar(
