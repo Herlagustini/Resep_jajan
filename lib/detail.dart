@@ -1,189 +1,203 @@
 import 'package:flutter/material.dart';
 
-class DetailPage extends StatefulWidget {
-  final Map<String, dynamic> recipe;
+class Detail extends StatelessWidget {
+  final String nama;
+  final String deskripsi;
+  final List<dynamic> bahan;
+  final List<dynamic> cara_membuat;
+  final String image;
 
-  const DetailPage({super.key, required this.recipe});
-
-  @override
-  _DetailPageState createState() => _DetailPageState();
-}
-
-class _DetailPageState extends State<DetailPage> {
-  bool isLiked = false;
-  bool isSaved = false;
+  const Detail({
+    Key? key,
+    required this.nama,
+    required this.deskripsi,
+    required this.bahan,
+    required this.cara_membuat,
+    required this.image,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.recipe['nama']),
-        backgroundColor: Colors.green,
-        elevation: 0,
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFFe5f5e9), // Light greenish color
-              Color(0xFFFDFBEF), // Soft cream color
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+        title: Text(
+          nama,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
-        child: SingleChildScrollView(
+        backgroundColor: Colors.teal,
+        elevation: 4,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Gambar Header
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      bottom: Radius.circular(20.0),
-                    ),
-                    child: Image.network(
-                      widget.recipe['image'],
-                      width: double.infinity,
-                      height: 250,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 16,
-                    left: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        widget.recipe['nama'],
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Tambahkan Icon Like dan Simpan
-                  Positioned(
-                    top: 16,
-                    right: 16,
-                    child: Row(
-                      children: [
-                        // Icon Like
-                        IconButton(
-                          icon: Icon(
-                            isLiked ? Icons.favorite : Icons.favorite_border,
-                            color: isLiked ? Colors.red : Colors.white,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              isLiked = !isLiked;
-                            });
-                          },
-                        ),
-                        // Icon Simpan
-                        IconButton(
-                          icon: Icon(
-                            isSaved ? Icons.bookmark : Icons.bookmark_border,
-                            color: isSaved ? Colors.yellow : Colors.white,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              isSaved = !isSaved;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              // Gambar resep dengan efek bayangan dan corner radius
+              Center(
+                child: Stack(
                   children: [
-                    // Deskripsi
-                    Text(
-                      widget.recipe['deskripsi'],
-                      style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                            fontSize: 16,
-                            height: 1.5,
+                    Container(
+                      height: 250,
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 15,
+                            offset: const Offset(0, 8),
                           ),
-                    ),
-                    const SizedBox(height: 24),
-                    // Bahan-Bahan
-                    ExpansionTile(
-                      title: const Text(
-                        "Bahan-Bahan",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                        ],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.network(
+                          image,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                color: Colors.grey,
+                                size: 50,
+                              ),
+                            );
+                          },
                         ),
                       ),
-                      initiallyExpanded: true,
-                      children: (widget.recipe['bahan'] ?? [])
-                          .asMap()
-                          .entries
-                          .map<Widget>((entry) {
-                        return ListTile(
-                          leading: CircleAvatar(
-                            radius: 14,
-                            backgroundColor: Colors.green,
-                            child: Text(
-                              "${entry.key + 1}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                          title: Text(entry.value,
-                              style: const TextStyle(fontSize: 16)),
-                        );
-                      }).toList(),
-                    ),
-                    const Divider(thickness: 1),
-                    // Cara Memasak
-                    ExpansionTile(
-                      title: const Text(
-                        "Cara Memasak",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      initiallyExpanded: true,
-                      children: (widget.recipe['cara_masak'] ?? [])
-                          .asMap()
-                          .entries
-                          .map<Widget>((entry) {
-                        return ListTile(
-                          leading: CircleAvatar(
-                            radius: 14,
-                            backgroundColor: Colors.green,
-                            child: Text(
-                              "${entry.key + 1}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                          title: Text(entry.value,
-                              style: const TextStyle(fontSize: 16)),
-                        );
-                      }).toList(),
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: 20),
+
+              // Kartu deskripsi
+              Card(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    deskripsi,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.justify,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Judul bahan
+              const Text(
+                "Bahan-Bahan",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.teal,
+                ),
+              ),
+              const Divider(thickness: 1.5),
+
+              // Daftar bahan dengan angka
+              ...bahan.asMap().entries.map((entry) {
+                int index = entry.key + 1;
+                String item = entry.value.toString();
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.teal,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '$index',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          item,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+              const SizedBox(height: 20),
+
+              // Judul cara membuat
+              const Text(
+                "Cara Membuat",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.teal,
+                ),
+              ),
+              const Divider(thickness: 1.5),
+
+              // Daftar langkah memasak
+              ...cara_membuat.asMap().entries.map((entry) {
+                int index = entry.key + 1;
+                String step = entry.value.toString();
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.teal,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '$index',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          step,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+              const SizedBox(height: 30),
             ],
           ),
         ),
